@@ -22,7 +22,7 @@ steps:
 
 - id: 'docker build - via dockerfile'
   name: 'gcr.io/cloud-builders/docker'
-  args: ['build', '--build-arg', 'SERVER_OE=test', '--build-arg', 'SERVER_VERSION=${TAG_NAME}', '-t', 'gcr.io/${PROJECT_ID}/${_SERVICE_NAME}', '.']
+  args: ['build', '--build-arg', 'DEBIAN_VERSION=${_DEBIAN_VERSION}', '--build-arg', 'SERVER_OE=test', '--build-arg', 'SERVER_VERSION=${TAG_NAME}', '-t', 'gcr.io/${PROJECT_ID}/${_SERVICE_NAME}', '.']
   automapSubstitutions: true
 images: 
 - 'gcr.io/${PROJECT_ID}/${_SERVICE_NAME}'
@@ -30,6 +30,7 @@ images:
 substitutions:
   _POV_VER: 'v 0.0.1 2024114'
   _SERVICE_NAME: 'visit-count-default' # default value
+  _DEBIAN_VERSION: 'bookworm-slim' # default value
 options:
   dynamic_substitutions: true
   logging: CLOUD_LOGGING_ONLY
