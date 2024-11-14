@@ -93,6 +93,12 @@ func nullHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	var (
+		Version      string = "v1.0.0"
+		OperatingEnv string = "development"
+	)
+	log.Printf("Running Version %s in %s", Version, OperatingEnv)
+
 	ctx := context.Background()
 
 	mdEndPoint := "computeMetadata/v1/project/project-id"

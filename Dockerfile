@@ -1,5 +1,3 @@
-# Copyright 2020 Google LLC
-#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -12,12 +10,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# [START memorystore_cloud_run_dockerfile]
+# Build Vars
+ARG GOLANG_VERSION="latest"
+ARG DEBIAN_VERSION="bookworm-slim"
+ARG SERVER_VERSION="v1.0.0"
+ARG SERVER_OE="development"
 
 # Use the offical golang image to create a binary.
 # This is based on Debian and sets the GOPATH to /go.
 # https://hub.docker.com/_/golang
-FROM golang:latest as builder
+FROM golang:${GOLANG_VERSION} as builder
 
 # Create and change to the app directory.
 WORKDIR /app
@@ -32,12 +34,10 @@ RUN go mod download
 COPY . ./
 
 # Build the binary.
-RUN go build -v -o server
+RUN go build -v -ldflags="-X 'main.Version=${SERVER_VERSION}' -X 'main.OperatingEnv=${SERVER_OE}'" -o server
 
 # Use the official Debian slim image for a lean production container.
-# https://hub.docker.com/_/debian
-# https://docs.docker.com/develop/develop-images/multistage-build/#use-multi-stage-builds
-FROM debian:bookworm-slim
+FROM debian:${DEBIAN_VERSION}
 RUN set -x && apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
     ca-certificates && \
     rm -rf /var/lib/apt/lists/*
@@ -48,4 +48,4 @@ COPY --from=builder /app/server /server
 # Run the web service on container startup.
 CMD ["/server"]
 
-# [END memorystore_cloud_run_dockerfile]
+# [END dockerfile]

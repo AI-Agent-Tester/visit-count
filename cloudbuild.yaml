@@ -1,0 +1,30 @@
+# Requires github tag based trigger for build, where tag conforms to SemVer:
+# v1.1.1
+
+# check the tag name and perform docker build
+steps:
+- id: 'build init'
+  name: 'ubuntu'
+  entrypoint: '/bin/bash'
+  args:
+  - '-c'
+  - |
+      if [[ "${TAG_NAME}" == "v1."* ]]; then
+        echo "**************************************************"
+        echo " Step: build init (${_POV_VER})"
+        echo " Tag Name: ${TAG_NAME}"
+        echo "**************************************************"
+        pwd
+      else
+        echo "******* no joy for tag: ${TAG_NAME} ********"
+        exit 1
+      fi
+
+- id: 'docker build - via dockerfile'
+  name: 'gcr.io/cloud-builders/docker'
+  args: ['build', '--build-arg', 'SERVER_OE=test', '--build-arg', 'SERVER_VERSION=${TAG_NAME}', '-t', 'gcr.io/${PROJECT_ID}/visit-count', '.']
+
+substitutions:
+  _POV_VER: 'v 0.0.1 2024114'
+options:
+  dynamic_substitutions: true
