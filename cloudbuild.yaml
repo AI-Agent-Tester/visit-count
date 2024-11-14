@@ -22,10 +22,11 @@ steps:
 
 - id: 'docker build - via dockerfile'
   name: 'gcr.io/cloud-builders/docker'
-  args: ['build', '--build-arg', 'SERVER_OE=test', '--build-arg', 'SERVER_VERSION=${TAG_NAME}', '-t', 'gcr.io/${PROJECT_ID}/visit-count', '.']
+  args: ['build', '--build-arg', 'SERVER_OE=test', '--build-arg', 'SERVER_VERSION=${TAG_NAME}', '-t', 'gcr.io/${PROJECT_ID}/${_SERVICE_NAME}', '.']
 
 substitutions:
   _POV_VER: 'v 0.0.1 2024114'
+  _SERVICE_NAME: 'visit-count-default' # default value
 options:
   dynamic_substitutions: true
   logging: CLOUD_LOGGING_ONLY
